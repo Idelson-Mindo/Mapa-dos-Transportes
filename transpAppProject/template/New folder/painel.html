@@ -1,0 +1,161 @@
+	<!-- panel -->
+      <div class="bodyContainer ">
+        <div class="row mapContainer">
+        <div id="collapseBtnXs" class="visible-xs">   
+          <button type="button" class="btn"  onclick="collapsePanelXs();">+</button>
+        </div> 
+        <div id="panel" >
+        <div id="collapseBtn" >     
+            <button type="button" class="btn btn-sm hidden-xs"  onclick="collapsePanel();">Painel de Conteudos<</button>
+        </div>
+        <div id="panelContent" class="container-fluid" >
+          {% include "painel.html"%}
+        </div>
+        </div>
+        </div>
+      </div>
+    <!-- map -->
+	<div class="bodyContainer ">
+        <div class="row mapContainer">
+        <div id="collapseBtnXs" class="visible-xs">   
+          <button type="button" class="btn"  onclick="collapsePanelXs();">+</button>
+        </div>
+
+        <div id="panel" >
+        <div id="collapseBtn" >     
+            <button type="button" class="btn btn-sm hidden-xs"  onclick="collapsePanel();">Painel de Conteudos<</button>
+        </div>
+        <div id="panelContent" class="container-fluid" >
+        	<!--<form>
+	MAPA BASE <br>
+
+	<label class="form-check-label">
+        	<input type="radio" name="mapaBase" value="osm" onClick="javascript:init();" /><span> OPEN STREET MAP</span><br>
+ 			<input type="radio" name="mapaBase" value="otm" onClick="javascript:openTopo();"/><span> OPEN TOPO MAP</span>
+ 			<
+    </label>          
+  </form>-->
+
+  	<form class="leaflet-control-layers-list"><div class="leaflet-control-layers-base"><label><input class="leaflet-control-layers-selector" name="leaflet-base-layers" type="radio"><span> Open Street Map</span></label><label><input class="leaflet-control-layers-selector" name="leaflet-base-layers" type="radio"><span> Open Topo Map</span></label></div><div class="leaflet-control-layers-separator"></div><div class="leaflet-control-layers-overlays"><div class="leaflet-control-layers-group" id="leaflet-control-layers-group-1"><label class="leaflet-control-layers-group-label"><span class="leaflet-control-layers-group-name">Layers</span></label><label><input class="leaflet-control-layers-selector" checked="" type="checkbox"><span> Provincias</span></label><label><input class="leaflet-control-layers-selector" checked="" type="checkbox"><span> pontostest</span></label></div></div></form>
+     <label for="exampleSelect1">SELECIONE:</label>
+    <select class="form-control" id="exampleSelect1">
+    	<option selected>DISTRITO MUNICIPAL</option>
+	    <option>KaMavota</option>
+	    <option>Nlhamankulu</option>
+	    <option>KaMubukwana</option>
+	    <option>KaMaxaquene</option>
+	    <option>Kamubutiwane</option>
+	    <option>kaNyaka</option>
+	    <option>KaMpfumo</option>
+	    <option>KaTembe</option>
+    </select>
+     <label for="exampleSelect1"></label>
+    <select class="form-control" id="exampleSelect1">
+    	<option selected>BAIRRO</option>
+      	<option>		JARDIM</option>
+		<option>		LUIS CABRAL</option>
+		<option>		MAVALANE "A"</option>
+		<option>		MAVALANE "B"</option>
+		<option>		HULENE "A"</option>
+		<option>		F.P.L.M.</option>
+		<option>		HULENE "B"</option>
+		<option>		FERROVIÁRIO</option>
+		<option>		LAULANE</option>
+		<option>		3 DE FEVEREIRO</option>
+		<option>		MAHOTAS</option>
+		<option>		AEROPORTO "A"</option>
+		<option>		MINKADJUINE</option>
+		<option>		CHAMANCULO "A"</option>
+		<option>		CHAMANCULO "B"</option>
+		<option>		AEROPORTO "B"</option>
+		<option>		UNIDADE 7</option>
+		<option>		XIPAMANHINE</option>
+		<option>		CHAMANCULO "D"</option>
+		<option>		MUNHUANA</option>
+		<option>		URBANIZAÇÃO</option>
+		<option>		MAXAQUENE "A"</option>
+		<option>		MAXAQUENE "B"</option>
+		<option>		POLANA CANIÇO "B"</option>
+		<option>		MAXAQUENE "D"</option>
+		<option>		MAGOANINE "B"</option>
+		<option>		MAGOANINE "A"</option>
+		<option>		INHAGOIA "B"</option>
+		<option>		INHAGOIA "A"</option>
+		<option>		MALHANGALENE "B"</option>
+		<option>		CENTRAL "C"</option>
+		<option>		POLANA CIMENTO "B"</option>
+		<option>		CENTRAL "A"</option>
+		<option>		ALTO MAÉ "B"</option>
+		<option>		COOP</option>
+		<option>		MALHANGALENE "A"</option>
+		<option>		CENTRAL "B"</option>
+		<option>		ALTO MAÉ "A"</option>
+		<option>		MAFALALA</option>
+		<option>		POLANA CIMENTO "A"</option>
+		<option>		POLANA CANIÇO "A"</option>
+		<option>		MAXAQUENE "C"</option>
+		<option>		CHAMANCULO "C"</option>
+		<option>		MALANGA</option>
+		<option>		NSALENE</option>
+		<option>		25 DE JUNHO "B"</option>
+		<option>		MALHAZINE</option>
+		<option>		25 DE JUNHO "A"</option>
+		<option>		JORGE DIMITROV</option>
+		<option>		BAGAMOYO</option>
+		<option>		ALBAZINE</option>
+		<option>		COSTA DO SOL</option>
+		<option>		SOMMERSCHIELD</option>
+		<option>		INCASSANE</option>
+		<option>		GUACHENI</option>
+		<option>		INGUIDE</option>
+		<option>		CHAMISSAVA</option>
+		<option>		CHALI</option>
+		<option>		ZIMPETO</option>
+		<option>		MAGOANINE "C"</option>
+		<option>		XEFINA</option>
+		<option>		AEROPORTO INTERNACIONAL</option>
+		<option>		CAMINHOS DE FERRO DE MOÇAMBIQUE</option>
+    </select><br>
+    
+    OU: <br>
+    	<input type="button" value="Minha localizacao!" onClick="javascript:getLocationLeaflet();"/>
+    <hr>
+
+    <h4>Procuro por:</h4>
+          Categorias:
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+		Areas de recreacao/Lazer
+	</label><br>
+	<label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+		Saneamento
+	</label><br>
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+      Saude
+    </label><br>
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+     Seguranca Publica
+    </label><br>
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+      Educacao
+    </label><br>
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+      Comercio
+    </label><br>
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input">
+      Acomodacao 
+    </label>
+ </div>
+          
+        </div>
+        </div>
+        </div>
+
+
+

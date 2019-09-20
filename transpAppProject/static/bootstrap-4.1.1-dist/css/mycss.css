@@ -1,0 +1,11 @@
+#top1{
+background-color:#72002d;
+z-index: 500;}
+
+#logo{
+	z-index: 10;
+	margin-left:20px;
+ 	vertical-align: middle;
+    border-style: none;
+    background-color: #ea9dbc;
+}

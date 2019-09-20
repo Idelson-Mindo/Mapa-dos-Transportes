@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+{% load static %}<!--to load static files-->
+{% load leaflet_tags %}
+<head>
+	{% leaflet_js %}
+	{% leaflet_css %}
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Mapa dos Transportes</title>
+	<style type="text/css">
+		#gis {width: 100%; height: 900px}
+	</style>
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.1.1-dist/css/bootstrap.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.1.1-dist/css/mycss.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'leafletgroupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link rel="stylesheet" href="{% static 'Leaflet.StyledLayerControl-master/css/styledLayerControl.css' %}"/>
+	<script type="text/javascript" src="{% static 'Leaflet.StyledLayerControl-master/src/styledLayerControl.js' %}"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}"></script>
+	<script type="text/javascript" src="{% static 'leafletgroupedlayercontrol/leaflet.groupedlayercontrol.js' %}"></script>
+</head>
+<body onload="OpenTopoMap">
+	<div class="container-fluid col-lg-12">
+{% include "head.html" %}
+	<script type="text/javascript">
+
+		// Google layers
+		var g_roadmap   = new L.Google('ROADMAP');
+		var g_satellite = new L.Google('SATELLITE');
+		var g_terrain   = new L.Google('TERRAIN');
+		
+		// OSM layers
+		var osmUrl='http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+		var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+		var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
+		
+		// ... more Base Maps
+		
+		// Sao Paulo Soybeans Plant
+		var soybeans_sp = new L.LayerGroup();
+		L.marker([-22, -49.80]).addTo(soybeans_sp),
+		L.marker([-23, -49.10]).addTo(soybeans_sp),
+		L.marker([-21, -49.50]).addTo(soybeans_sp);
+		
+		// Rio de Janeiro Corn Plant
+		var corn_rj = new L.LayerGroup();
+		L.marker([-22, -43.20]).addTo(corn_rj),
+		L.marker([-23, -43.50]).addTo(corn_rj);
+		
+		// ... more Overlays
+
+		//Create the Leaflet Map Object and add the layer that will be default basemap
+		var map = L.map('map', {
+		center: [-16, -54],
+		zoom: 4
+		});
+		
+		map.addLayer(g_roadmap);
+
+		//Define structure of groups and layers of basemap
+		var baseMaps = [
+					{ 
+						groupName : "Google Base Maps",
+						expanded : true,
+						layers    : {
+							"Satellite" :  g_satellite,
+							"Road Map"  :  g_roadmap,
+							"Terreno"   :  g_terrain
+						}
+					}, {
+						groupName : "OSM Base Maps",
+						layers    : {
+							"OpenStreetMaps" : osm
+						}
+					}, {
+						groupName : "Bing Base Maps",
+						layers    : {
+							"Satellite" : bing1,
+							"Road"      : bing2
+						}
+					}							
+	];
+
+	//Define structure of groups and layers of overlays
+	var overlays = [
+					 {
+						groupName : "Sao Paulo",
+						expanded  : true,
+						layers    : { 
+							"Soybeans Plant" : soybeans_sp,
+							"Corn Plant" 	 : corn_sp
+						}	
+					 }, {
+						groupName : "Rio de Janeiro",
+						expanded  : true,
+						layers    : { 
+							"Bean Plant"     : bean_rj,
+							"Corn Plant" 	 : corn_rj,
+							"Rice Plant"	 : rice_rj		
+						}	
+					 }, {
+						groupName : "Belo Horizonte",
+						layers    : { 
+							"Sugar Cane Plant"	: sugar_bh,
+							"Corn Plant" 	 	: corn_bh		
+						}	
+					 }							 
+	];
+	//deleted layer
+	 soybeans_sp.StyledLayerControl = {
+		removable : true,
+		visible : false
+	}
+	// ... more layers
+	//Define the options for StyledLayerControl
+	var options = {
+		container_width 	: "300px",
+		container_maxHeight : "350px", 
+		group_maxHeight     : "80px",
+		exclusive       	: false
+	};
+
+	
+
+
+
+
+
+		/*function our_layers(map, options){
+
+			var corredores_map = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:corredores',
+				format: 'image/png',
+				transparent : true
+			}).addTo(map);
+
+			var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			    maxZoom: 17,
+			    attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenStreetMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+			  }); 
+
+			var OpenTopoMap = L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=ba71bd05af9a41b19991fc8fc8daf4fb', {
+			    maxZoom: 17,
+			  });
+
+			var cartoDark = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+			    maxZoom: 17,
+			  });
+
+			var Ppar = new L.GeoJSON.AJAX("{% url 'Paragens' %}",{
+				onEachFeature: function(feature,layer){
+					layer.bindPopup(feature.properties.name.toString())
+				}
+
+			});
+			var c6var = new L.GeoJSON.AJAX("{% url 'c6y' %}",{
+				onEachFeature: function(feature,layer){
+					layer.bindPopup(feature.properties.rota.toString())
+				}
+
+			});
+			var c9var = new L.GeoJSON.AJAX("{% url 'c9y' %}",{
+				onEachFeature: function(feature,layer){
+					layer.bindPopup(feature.properties.rota.toString())
+				}
+
+			});
+
+			var terminal = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:terminal',
+				format: 'image/png',
+				transparent : true
+			}).addTo(map);
+			var rota_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:rota_emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+
+			var c6_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira6emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c9_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c5_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c20_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira20emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c21_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c23_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c24_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c40_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c50_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c53_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c66_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c67_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c51_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c47_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c16_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira16emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c31_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira9emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c10_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira10emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c14_2_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira14_2emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var c17_emtpm = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:carreira17emtpm',
+				format: 'image/png',
+				transparent : true
+			});
+			var bus_stop = new L.TileLayer.WMS('http://localhost:8090/geoserver/transportSystem/wms', {
+				layers:'transportSystem:transpCoreApp_paragens',
+				format: 'image/png',
+				transparent : true
+			});
+			var baseLayers = {
+   			 "OpenStreetMap padrao": osm,
+   			 "OpenStreetMap CartoDark":cartoDark,
+   			 "OpenTopoMap":OpenTopoMap,
+   			}
+
+			var groupedOverLays = {
+   				"Transporte Rodoviario": {
+   					"Transporte  Publico-EMTPM": rota_emtpm,
+   					"Carreira 5": c5_emtpm,
+   					"Carreira 6":c6var,
+   					"Carreira 9":c9var,
+   					"Carreira 10":c10_emtpm,
+   					"Carreira 14-2":c14_2_emtpm,
+   					"Carreira 16":c16_emtpm,
+   					"Carreira 17":c17_emtpm,
+   					"Carreira 20":c20_emtpm,
+   					"Carreira 21":c21_emtpm,
+   					"Carreira 23":c23_emtpm,
+   					"Carreira 24":c24_emtpm,
+   					"Carreira 31":c31_emtpm,
+   					"Carreira 40":c40_emtpm,
+   					"Carreira 47":c47_emtpm,
+   					"Carreira 50":c50_emtpm,
+   					"Carreira 53":c53_emtpm,
+   					"Carreira 66":c66_emtpm,
+   					"Carreira 67":c67_emtpm,
+   					"Carreira 51":c51_emtpm,
+   					"Paragens":Ppar,
+   				
+			}};
+
+			L.control.groupedLayers(baseLayers, groupedOverLays).addTo(map);
+		}
+	</script>
+{% leaflet_map "gis" callback="window.our_layers" %}
+<script type="text/javascript" src="{% static 'bootstrap-4.1.1-dist/js/bootstrap.js' %}"></script>
+</div>
+</body>
+</html>
+
